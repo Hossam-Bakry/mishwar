@@ -1,0 +1,70 @@
+{
+  "project_info": {
+    "project_number": "157850260344",
+    "project_id": "mishwar-869b4",
+    "storage_bucket": "mishwar-869b4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:157850260344:android:ba4e813bb6f12c82a5ee8d",
+        "android_client_info": {
+          "package_name": "com.app.mishwar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "157850260344-7e8o3f2cotbdsg0a2fs77fjfej4s8aic.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.mishwar",
+            "certificate_hash": "5a229010abfa179b2daf05cf923cae5a476b7f95"
+          }
+        },
+        {
+          "client_id": "157850260344-sabc8b6l9qii587l0mjegh4f7tlnlvbr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.mishwar",
+            "certificate_hash": "321b8760a52241c3667af7564106dc79e7fd0b83"
+          }
+        },
+        {
+          "client_id": "157850260344-sthh28u7ub13v7ncl2ak93adsqbigre7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.mishwar",
+            "certificate_hash": "dec84087f0de1042a37a833e077d7605f822c021"
+          }
+        },
+        {
+          "client_id": "157850260344-fi2nivnmu9luf39r3v0mmu6kec212k9e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKefXBjNTOBW4bWqaSmBQnE-a_k7S7txQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "157850260344-fi2nivnmu9luf39r3v0mmu6kec212k9e.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "157850260344-02t327cvlj8mcvtc3mesd30e0ujf1god.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.mishwar.mishwar"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
