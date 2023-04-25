@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mishwar/Screens/confirmedorderui/paymentProvider.dart';
 import 'package:mishwar/Screens/confirmedorderui/second_step_address.dart';
 import 'package:mishwar/Screens/confirmedorderui/third_step_delivery.dart';
 import 'package:mishwar/Screens/paymentscreen/ready_ui.dart';
@@ -7,11 +8,15 @@ import 'package:mishwar/main.dart';
 import 'package:dotted_line/dotted_line.dart';
 import 'package:mishwar/Screens/shared/button_ui.dart';
 import 'package:mishwar/Screens/confirmedorderui/fifth_step_confirm.dart';
+import 'package:provider/provider.dart';
 import 'package:toast/toast.dart';
 import 'package:mishwar/Screens/HomePage.dart';
 import 'package:mishwar/app/AppConfig.dart';
 
 import '../GlobalFunction.dart';
+import '../PaymentMethod.dart';
+import '../payment_provider.dart';
+import '../paymentscreen/payment_form.dart';
 import 'first_step_user_data.dart';
 import 'onlinePayment.dart';
 
@@ -23,6 +28,14 @@ class FourthStepPayment extends StatefulWidget {
 class _FourthStepPaymentState extends State<FourthStepPayment> {
   home h = new home();
   String payment;
+  PaymentProvider provider;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    provider = Provider.of<PaymentProvider>(context, listen:  false);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -486,21 +499,31 @@ class _FourthStepPaymentState extends State<FourthStepPayment> {
                             color: Colors.black12.withOpacity(.1),
                             thickness: 1,
                           ),
-                          SizedBox(
-                            height: 0,
-                          ),
+                          SizedBox(height: 0),
                           GestureDetector(
                             onTap: () {
-                              Navigator.push(context,
-                                  GlobalFunction.route(CheckoutView()));
+                              showModalBottomSheet(
+                                context: context,
+                                backgroundColor: Colors.transparent,
+                                isDismissible: true,
+                                isScrollControlled: true,
+                                builder: (context) {
+                                  return selectionBottomSheet(
+                                    context,
+                                  );
+                                },
+                              );
+                              // Navigator.push(context,
+                              //     GlobalFunction.route(OnlinePaymentWebView()));
+                              // GlobalFunction.route(PaymentMethod()));
                               setState(() {
                                 payment = "payment2";
                               });
-                              appConfig.prefs.setString(
-                                  'paymethodtext',
-                                  DemoLocalizations.of(context)
-                                      .title['Bycreditcard']);
-                              appConfig.prefs.setInt('paymethodvalue', 2);
+                              // appConfig.prefs.setString(
+                              //     'paymethodtext',
+                              //     DemoLocalizations.of(context)
+                              //         .title['Bycreditcard']);
+                              // appConfig.prefs.setInt('paymethodvalue', 2);
                             },
                             child: Container(
                                 height: 30,
@@ -517,12 +540,12 @@ class _FourthStepPaymentState extends State<FourthStepPayment> {
                                         setState(() {
                                           payment = value;
                                         });
-                                        appConfig.prefs.setString(
-                                            'paymethodtext',
-                                            DemoLocalizations.of(context)
-                                                .title['Bycreditcard']);
-                                        appConfig.prefs
-                                            .setInt('paymethodvalue', 2);
+                                        //   appConfig.prefs.setString(
+                                        //       'paymethodtext',
+                                        //       DemoLocalizations.of(context)
+                                        //           .title['Bycreditcard']);
+                                        //   appConfig.prefs
+                                        //       .setInt('paymethodvalue', 2);
                                       },
                                     ),
                                     //Bycreditcard
@@ -555,7 +578,7 @@ class _FourthStepPaymentState extends State<FourthStepPayment> {
                 ),
                 backColor: Theme.of(context).accentColor,
                 function: () {
-                  if (payment == null) {
+                  if (payment == null && provider.paymentType.isEmpty) {
                     Toast.show(
                         DemoLocalizations.of(context)
                             .title['Pleasechooseapaymentmethod'],
@@ -581,4 +604,138 @@ class _FourthStepPaymentState extends State<FourthStepPayment> {
       ),
     );
   }
+  Widget selectionBottomSheet(
+      BuildContext context,
+      ) {
+    var mediaQuery = MediaQuery.of(context);
+    var theme = Theme.of(context);
+    List<String> paymentList = [
+      "images/Bitmap1.png",
+      "images/Bitmap2.png",
+      "images/MADA.png"
+    ];
+    int selectedIndex;
+    String paymentType;
+    double amount;
+
+    return FractionallySizedBox(
+      heightFactor: 0.4,
+      child: StatefulBuilder(
+        builder: (context, setState) {
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.85,
+            padding: EdgeInsets.symmetric(
+              horizontal: mediaQuery.size.width * 0.064,
+              vertical: mediaQuery.size.height * 0.035,
+            ),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
+              ),
+            ),
+            child: Container(
+              child: Column(
+                children: [
+                  Text(
+                    "Chose Your Payment Type",
+                    style: theme.textTheme.titleLarge
+                        .copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 20),
+                  SizedBox(
+                    height: mediaQuery.size.height * 0.15,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        return InkWell(
+                          onTap: () {
+                            setState(() {
+                              selectedIndex = index;
+                              if(index == 0){
+                                paymentType = "VISA";
+                              } else if(index == 1){
+                                paymentType = "MASTERCARD";
+                              } else {
+                                paymentType = "MADA";
+                              }
+                            });
+                          },
+                          child: Container(
+                            width: mediaQuery.size.width * 0.25,
+                            padding: EdgeInsets.all(8.0),
+
+                            margin: EdgeInsets.all(8.0),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade200,
+                              borderRadius: BorderRadius.circular(8.0),
+                              border: Border.all(
+                                color: selectedIndex == index
+                                    ? theme.primaryColor
+                                    : Colors.white,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                    blurRadius: 1, color: Colors.grey.shade400)
+                              ],
+                            ),
+                            child: Image.asset(paymentList[index]),
+                          ),
+                        );
+                      },
+                      itemCount: 3,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      provider.setPaymentType(paymentType);
+                      if (provider.paymentType == null) {
+                        Toast.show(
+                            DemoLocalizations.of(context)
+                                .title['Pleasechooseapaymentmethod'],
+                            context,
+                            duration: Toast.LENGTH_SHORT,
+                            gravity: Toast.BOTTOM);
+                      } else {
+                        Navigator.pushReplacement(
+                          context,
+                          PageRouteBuilder(
+                            pageBuilder: (context, animation1, animation2) =>
+                                FifthStepConfirm(),
+                            transitionDuration: Duration(seconds: 0),
+                          ),
+                        );
+                      }
+                      debugPrint(provider.paymentType);
+                      // Navigator.pop(context);
+                    },
+                    child: Container(
+                      alignment: Alignment.center,
+                      width: mediaQuery.size.width * 0.7,
+                      margin: EdgeInsets.only(top: 16.0),
+                      height: 50,
+                      decoration: BoxDecoration(
+                          color: theme.primaryColor,
+                          borderRadius: BorderRadius.circular(12.0)
+                      ),
+                      child: Text(
+                        DemoLocalizations.of(context)
+                            .title['select'],
+                        style: theme.textTheme.titleMedium.copyWith(
+                            color: Colors.white
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
 }
+
+

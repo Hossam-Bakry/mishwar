@@ -7,7 +7,7 @@ import '../dbHelper.dart';
 class SlmlmProvider extends ChangeNotifier {
 
 
-  int quantity = 1, quantityOffer = 0, totalquantity = 0;
+  int quantity = 1, quantityOffer = 0, totalquantity = 0, quantityAddOnItems = 0;
   double totalPriceOffer = 0.0, allPrice = 0.0, tax = 0.0;
   String totalofferNames = '';
   SubProductDetail1 subProduct;
@@ -22,6 +22,16 @@ class SlmlmProvider extends ChangeNotifier {
 
 
   double totalSubItemsPrice = 0;
+
+  void setAddOnItemQuantity(int v){
+    quantityAddOnItems = v;
+    notifyListeners();
+  }
+
+  void changeSubitemQuantity(int quantity) {
+    subItemQuantity = quantity;
+    notifyListeners();
+  }
 
   void selectTypePrice({SubProductDetail1 subProductParm}) {
     subProduct = subProductParm;

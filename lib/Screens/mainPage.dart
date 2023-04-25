@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -6,10 +5,12 @@ import 'package:mishwar/Screens/slmlmProvider.dart';
 import 'package:mishwar/Screens/subSelectPrice.dart';
 import 'package:mishwar/Screens/subofferItem.dart';
 import 'package:mishwar/app/AppConfig.dart';
+import 'package:mishwar/app/Services/AddressServices.dart';
 import 'package:mishwar/app/Services/ProductServices.dart';
 import 'package:mishwar/lang/app_Localization.dart';
 import 'package:provider/provider.dart';
 import 'package:toast/toast.dart';
+import 'package:url_launcher/url_launcher.dart'  as UrlLauncher;
 import 'package:url_launcher/url_launcher.dart';
 import '../Model/CartModelLocal.dart';
 import '../Model/FavouriteLocalModel.dart';
@@ -36,6 +37,7 @@ class _state extends State<MainPage> {
 
   String noteMessage = '';
   List<SubProductDetail> subProduct = [];
+
   var i = 0;
   home h = new home();
 
@@ -43,7 +45,6 @@ class _state extends State<MainPage> {
   void initState() {
     productServices.getCategory();
     productServices.getProduct('1', '1');
-
     super.initState();
   }
 
@@ -59,6 +60,8 @@ class _state extends State<MainPage> {
           // color: Colors.white,
           child: Column(
             children: [
+
+
               Stack(
                 children: [
                   Container(
@@ -79,9 +82,12 @@ class _state extends State<MainPage> {
                     right: MediaQuery.of(context).size.width * .75,
                     top: MediaQuery.of(context).size.height * .175,
                     child: GestureDetector(
-                      onTap: () {
+                      onTap: () async{
                         _makingPhoneCall();
+                        // await UrlLauncher.launch("tel://920007749");
+                        print('call ');
                       },
+
                       child: Container(
                         padding: EdgeInsets.all(10),
                         decoration: BoxDecoration(
@@ -163,8 +169,7 @@ class _state extends State<MainPage> {
                                     appConfig.dApp.mainCategoryList[index],
                                   );
                                   productServices.getProduct(
-                                    appConfig.dApp.mainCategoryList[index].id
-                                        .toString(),
+                                    appConfig.dApp.mainCategoryList[index].id.toString(),
                                     '1',
                                   );
                                   print(
@@ -263,8 +268,7 @@ class _state extends State<MainPage> {
                                 onTap: () {
                                   ProductDetails2(
                                     appConfig.dApp.mainProductsList[index],
-                                    appConfig.dApp.mainProductsList[index]
-                                        .subItems,
+                                    appConfig.dApp.mainProductsList[index].promotionItems,
                                   );
                                   // if (appConfig.dApp.mainProductsList[index]
                                   //         .subItems.length ==
@@ -1092,8 +1096,7 @@ class _state extends State<MainPage> {
       quantityOfferParm: 0,
     );
     int quantity = Provider.of<SlmlmProvider>(context, listen: false).quantity,
-        quantityOffer = Provider.of<SlmlmProvider>(context, listen: false).quantityOffer,
-        subItemquantity = Provider.of<SlmlmProvider>(context, listen: false).subItemQuantity;
+        quantityOffer = Provider.of<SlmlmProvider>(context, listen: false).quantityOffer;
     print(
         '55555=${Provider.of<SlmlmProvider>(context, listen: false).quantity}');
     double totalPrice = double.parse(product.price2) * quantity;
@@ -1246,7 +1249,8 @@ class _state extends State<MainPage> {
                                               ),
                                               AddSubItem(
                                                 // totalPrice: double.parse(data[index].price2),
-                                                subItemTotalPrice: subItemTotalPrice,
+                                                subItemTotalPrice:
+                                                    subItemTotalPrice,
                                                 subItemProduct: data[index],
                                                 quantity: quantityOffer,
                                               ),
@@ -1462,32 +1466,33 @@ class _state extends State<MainPage> {
                         )),
                     onTap: () async {
                       // Navigator.pushNamed(context, '/Cart');
-                      if( Provider.of<SlmlmProvider>(context, listen: false).quantity >=  Provider.of<SlmlmProvider>(context, listen: false).subItemQuantity) {
+                      if (Provider.of<SlmlmProvider>(context, listen: false)
+                              .quantity >=
+                          Provider.of<SlmlmProvider>(context, listen: false)
+                              .subItemQuantity) {
                         CartMedelLocal p1 = new CartMedelLocal({
                           "id": int.parse(product.id),
                           "name": product.name,
                           "img": product.image,
                           "description": product.description,
                           "price": double.parse(product.price),
-                          "offerPrice": Provider
-                              .of<SlmlmProvider>(context, listen: false)
-                              .totalPriceOffer,
+                          "offerPrice":
+                              Provider.of<SlmlmProvider>(context, listen: false)
+                                  .totalPriceOffer,
                           "price2": double.parse(product.price2),
-                          "totalPrice": double.parse(product.price2) * Provider
-                              .of<SlmlmProvider>(context, listen: false)
-                              .quantity +
-                              Provider
-                                  .of<SlmlmProvider>(context, listen: false)
+                          "totalPrice": double.parse(product.price2) *
+                                  Provider.of<SlmlmProvider>(context,
+                                          listen: false)
+                                      .quantity +
+                              Provider.of<SlmlmProvider>(context, listen: false)
                                   .totalPriceOffer,
                           "quantity":
-                          Provider
-                              .of<SlmlmProvider>(context, listen: false)
-                              .quantity,
+                              Provider.of<SlmlmProvider>(context, listen: false)
+                                  .quantity,
                           "selectedTypeName": 'mainProduct',
                           "offerName":
-                          Provider
-                              .of<SlmlmProvider>(context, listen: false)
-                              .totalofferNames,
+                              Provider.of<SlmlmProvider>(context, listen: false)
+                                  .totalofferNames,
                           'message': noteMessage,
                         });
 
@@ -1495,8 +1500,7 @@ class _state extends State<MainPage> {
                           Navigator.pop(context);
                           addProductDialog(
                             context,
-                            Provider
-                                .of<SlmlmProvider>(context, listen: false)
+                            Provider.of<SlmlmProvider>(context, listen: false)
                                 .quantity,
                           );
                           await dbHelper.addToCart(p1);
@@ -1504,19 +1508,18 @@ class _state extends State<MainPage> {
                           Navigator.pop(context);
                           addProductDialog(
                               context,
-                              Provider
-                                  .of<SlmlmProvider>(context, listen: false)
+                              Provider.of<SlmlmProvider>(context, listen: false)
                                   .quantity);
                           dbHelper.updateCourse(p1);
                         }
                       } else {
                         print("you can'/t");
                         Toast.show(
-                            DemoLocalizations.of(context).title['subItemMorethanMainItem'],
-                            context,
-                            duration: 4,
-                            gravity: Toast.BOTTOM,
-
+                          DemoLocalizations.of(context)
+                              .title['subItemMorethanMainItem'],
+                          context,
+                          duration: 4,
+                          gravity: Toast.BOTTOM,
                         );
                       }
                     },
@@ -1738,11 +1741,19 @@ class _state extends State<MainPage> {
 
   _makingPhoneCall() async {
     const url = 'tel:920007749';
+    // print(canLaunch(url).then((bool){
+    //   print('>>>>>>>>>>>>>>>>>>>>>>>');
+    //   print(bool);
+    // }));
+    print('>>>>>>>>>>>>>>>>>>>>>>>');
     if (await canLaunch(url)) {
       await launch(url);
+      print('>>>>>>>>>>>>>>>>>>>>>>>');
     } else {
+
       throw 'Could not launch $url';
     }
+
   }
 
   confirmCloseApp(BuildContext context) {

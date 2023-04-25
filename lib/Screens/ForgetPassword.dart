@@ -1,11 +1,14 @@
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:mishwar/app/Services/UserServices.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mishwar/lang/app_Localization.dart';
+import '../app/Services/snackbar_service.dart';
 import '../main.dart';
 import 'GlobalFunction.dart';
 import 'Verification.dart';
+import 'otp_provider.dart';
 
 
 class ForgetPassword extends StatefulWidget{
@@ -27,10 +30,21 @@ class _state extends State<ForgetPassword>{
   TextEditingController username=new TextEditingController();
   TextEditingController password=new TextEditingController();
   Map<String,dynamic>responce;
+  var result;
+
+
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          iconTheme: IconThemeData(
+            color: Colors.black
+          ),
+        ),
         resizeToAvoidBottomInset: false,
         backgroundColor: Color(h.whiteColor),
         body:  Container(
@@ -168,31 +182,68 @@ class _state extends State<ForgetPassword>{
                     child: Text(error,style: TextStyle(color: Color(h.ErorrBorderColor),fontSize: 12),)),
                 SizedBox(height: 20,),
                 GestureDetector(
-                  onTap:() async =>{
-                    if(formKey.currentState.validate()){
-                    if(username.text.substring(0,1)=="0"){
-                      setState(() {
-                        username.text=username.text.substring(1);
-                      }),
-                      },
-                      responce=await userServices.sendCode(key+username.text),
-                      if(responce["StatusCode"]==200)
-                         Navigator.push(context, GlobalFunction.route(verification("Forget",responce["Message"]["phone"],)))
-                            else{
-                              setState((){
-                                     error=responce["Message"];
-                                     isError=false;
-                                 }),
-                       /*    Toast.show(
-                            "${responce["Message"]}", context,
-                            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM)*/
-                            }
-                    }
-                    else{
-                      setState((){
-                        isError=true;
-                      })
-                    }
+                  onTap:() async => {
+                    if (formKey.currentState.validate())
+                      {
+                        // if (username.text.substring(0, 1) == "0")
+                        //   {
+                        //     setState(() {
+                        //       username.text = username.text.substring(1);
+                        //     }),
+                        //   },
+
+                        result = await userServices.checkMobile(username.text),
+
+                        if (result == false)
+                          {
+                            Navigator.pushReplacement(
+                              context,
+                              GlobalFunction.routeBottom(
+                                ChangeNotifierProvider(
+                                  create: (context) => OTPProvider(),
+                                  child: verification(
+                                    "forget",
+                                    username.text,
+                                    // otp: data["item2"],
+                                    // name: name.text,
+                                    // email: email.text,
+                                    // password: password.text,
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            // debugPrint("----------------------------------------"),
+                            // debugPrint("otp : ${data["item2"]}"),
+                          }
+                        else if (result == true)
+                          {
+                            SnackBarService.showErrorMessage(
+                              DemoLocalizations.of(context).title['not_existing'],
+                            ),
+                            debugPrint("error"),
+                          }
+                        // if (responce["StatusCode"] == 200)
+                        //   Navigator.push(
+                        //       context,
+                        //       GlobalFunction.route(verification(
+                        //         "Forget",
+                        //         responce["Message"]["phone"],
+                        //       )))
+                        // else
+                        //   {
+                        //     setState(() {
+                        //       error = responce["Message"];
+                        //       isError = false;
+                        //     }),
+                        //   }
+                      }
+                    else
+                      {
+                        setState(() {
+                          isError = true;
+                        })
+                      }
                   },
                   child: Container(
                     decoration:BoxDecoration(

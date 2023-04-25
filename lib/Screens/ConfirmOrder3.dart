@@ -45,9 +45,10 @@ class _state extends State<ConfirmOrder3> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   List<AddressModel> addressList;
   AddressServices addressServices = new AddressServices();
+  SharedPreferences prefs;
 
   loadData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
     addressList = await addressServices.GetAddresses(prefs.getString("UserId"));
     setState(() {});
     for (int i = 0; i < addressList.length; i++) {
@@ -340,13 +341,19 @@ class _state extends State<ConfirmOrder3> {
                                                             .getInstance();
                                                     pref.setString("address_id",
                                                         addressList[index].id);
-                                                    Map<String, dynamic>
-                                                        responce =
-                                                        await addressServices
-                                                            .SetPrimaryAddress(
-                                                                addressList[
-                                                                        index]
-                                                                    .id);
+                                                    var responce =
+                                                    await addressServices
+                                                        .setPrimaryaddress(
+                                                      prefs.getString("UserId"),
+                                                      addressList[index].id,
+                                                    );
+                                                    // Map<String, dynamic>
+                                                    //     responce =
+                                                    //     await addressServices
+                                                    //         .SetPrimaryAddress(
+                                                    //             addressList[
+                                                    //                     index]
+                                                    //                 .id);
                                                     loadData();
                                                     print(responce);
                                                     setState(() {
@@ -784,7 +791,7 @@ class _state extends State<ConfirmOrder3> {
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
-                          context, GlobalFunction.route(CheckoutView()));
+                          context, GlobalFunction.route(OnlinePaymentWebView()));
                       setState(() {
                         payment = "payment2";
                       });

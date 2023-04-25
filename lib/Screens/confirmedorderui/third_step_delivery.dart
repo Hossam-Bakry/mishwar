@@ -16,6 +16,7 @@ import 'package:mishwar/Screens/confirmedorderui/fourth_step_payment.dart';
 import 'package:mishwar/Screens/HomePage.dart';
 import 'package:mishwar/app/AppConfig.dart';
 
+import '../../Model/Region.dart';
 import 'first_step_user_data.dart';
 
 class ThirdStepDelivery extends StatefulWidget {
@@ -30,8 +31,8 @@ class _ThirdStepDeliveryState extends State<ThirdStepDelivery> {
   String branchId;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  List<RegionDetail> RegionList = [];
-  List<RegionDetail> RegionList0 = [];
+  List<Region> RegionList = [];
+  List<Region> RegionList0 = [];
   List<BranchModelDetail> branchList = [];
   List<BranchModelDetail> branchList0 = [];
   AddressServices addressServices = new AddressServices();
@@ -53,7 +54,8 @@ class _ThirdStepDeliveryState extends State<ThirdStepDelivery> {
   }
 
   loadData() async {
-    RegionList0 = await addressServices.GetRegions();
+    // RegionList0 = await addressServices.GetRegions();
+    RegionList0 = await addressServices.getRegions();
     setState(() {
       RegionList = RegionList0;
     });
@@ -64,10 +66,7 @@ class _ThirdStepDeliveryState extends State<ThirdStepDelivery> {
     // TODO: implement initState
     loadData();
     loadBranchData();
-    deliveryValue =
-        Provider.of<GetDeliveryValueProvider>(context, listen: false)
-            .priceDelivery;
-    // branchId = Provider.of<GetUserBranch>(context, listen: false).branchId;
+    deliveryValue = Provider.of<GetDeliveryValueProvider>(context, listen: false).priceDelivery;
     super.initState();
   }
 
@@ -550,9 +549,7 @@ class _ThirdStepDeliveryState extends State<ThirdStepDelivery> {
                             delevery = "delivery2";
                           });
 
-                          Provider.of<GetDeliveryValueProvider>(context,
-                                  listen: false)
-                              .getDeliveryValue(deliveryValue);
+                          Provider.of<GetDeliveryValueProvider>(context, listen: false).getDeliveryValue(deliveryValue);
                           print(
                               '333=${Provider.of<GetDeliveryValueProvider>(context, listen: false).priceDelivery}');
                           appConfig.prefs.setString(

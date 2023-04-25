@@ -24,15 +24,6 @@ class OrdersModel {
   String messageCode;
   List<OrdersList> list;
 
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['statusCode'] = statusCode;
-    map['messageCode'] = messageCode;
-    if (list != null) {
-      map['List'] = list.map((v) => v.toJson()).toList();
-    }
-    return map;
-  }
 }
 
 /// userID : 13
@@ -81,7 +72,7 @@ class OrdersModel {
 class OrdersList {
 
   OrdersList.fromJson(dynamic json) {
-    userID = json['userID'];
+    // userID = json['userID'];
     orderID = json['orderID'];
     orderNumber = json['orderNumber'];
     orderDate = json['orderDate'];
@@ -95,7 +86,7 @@ class OrdersList {
     latitude = json['latitude'];
     addressID = json['addressID'];
     driverID = json['driverID'];
-    driver = json['driver'];
+    // driver = json['driver'];
     driverLat = json['driverLat'];
     driverLong = json['driverLong'];
     orderStatusId = json['orderStatusId'];
@@ -107,7 +98,7 @@ class OrdersList {
     customerID = json['customerID'];
     status = json['status'];
     region = json['region'];
-    regionID = json['regionID'];
+    // regionID = json['regionID'];
     flat = json['flat'];
     floor = json['floor'];
     address = json['address'];
@@ -116,12 +107,12 @@ class OrdersList {
     addressLong = json['addressLong'];
     notes = json['notes'];
     orderStatus = json['orderStatus'];
-    orderType = json['orderType'];
-    orderTypeID = json['orderTypeID'];
+    // orderType = json['orderType'];
+    // orderTypeID = json['orderTypeID'];
     branchId = json['branchId'];
     branch = json['branch'];
-    cashier = json['cashier'];
-    tableNo = json['tableNo'];
+    // cashier = json['cashier'];
+    // tableNo = json['tableNo'];
     if (json['items'] != null) {
       items = [];
       json['items'].forEach((v) {
@@ -130,9 +121,9 @@ class OrdersList {
     }
   }
 
-  num userID;
-  num orderID;
-  String orderNumber;
+  // String userID;
+  int orderID;
+  int orderNumber;
   String orderDate;
   num subTotal;
   num discount;
@@ -142,13 +133,13 @@ class OrdersList {
   num allQuantity;
   String longitude;
   String latitude;
-  num addressID;
-  num driverID;
-  dynamic driver;
+  int addressID;
+  int driverID;
+  // dynamic driver;
   dynamic driverLat;
   dynamic driverLong;
   num orderStatusId;
-  num paymentType;
+  String paymentType;
   dynamic payment;
   num appDeliveryType;
   num appPaymentType;
@@ -156,71 +147,24 @@ class OrdersList {
   dynamic customerID;
   dynamic status;
   String region;
-  dynamic regionID;
-  dynamic flat;
-  dynamic floor;
+  // dynamic regionID;
+  String flat;
+  String floor;
   String address;
   String phone;
   String addressLat;
   String addressLong;
   String notes;
-  dynamic orderStatus;
-  dynamic orderType;
-  dynamic orderTypeID;
+  String orderStatus;
+  // dynamic orderType;
+  // dynamic orderTypeID;
   dynamic branchId;
   dynamic branch;
-  dynamic cashier;
-  dynamic tableNo;
+  // dynamic cashier;
+  // dynamic tableNo;
   List<Items> items;
 
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['userID'] = userID;
-    map['orderID'] = orderID;
-    map['orderNumber'] = orderNumber;
-    map['orderDate'] = orderDate;
-    map['subTotal'] = subTotal;
-    map['discount'] = discount;
-    map['tax'] = tax;
-    map['deliveryValue'] = deliveryValue;
-    map['totalValue'] = totalValue;
-    map['allQuantity'] = allQuantity;
-    map['longitude'] = longitude;
-    map['latitude'] = latitude;
-    map['addressID'] = addressID;
-    map['driverID'] = driverID;
-    map['driver'] = driver;
-    map['driverLat'] = driverLat;
-    map['driverLong'] = driverLong;
-    map['orderStatusId'] = orderStatusId;
-    map['paymentType'] = paymentType;
-    map['payment'] = payment;
-    map['appDeliveryType'] = appDeliveryType;
-    map['appPaymentType'] = appPaymentType;
-    map['customer'] = customer;
-    map['customerID'] = customerID;
-    map['status'] = status;
-    map['region'] = region;
-    map['regionID'] = regionID;
-    map['flat'] = flat;
-    map['floor'] = floor;
-    map['address'] = address;
-    map['phone'] = phone;
-    map['addressLat'] = addressLat;
-    map['addressLong'] = addressLong;
-    map['notes'] = notes;
-    map['orderStatus'] = orderStatus;
-    map['orderType'] = orderType;
-    map['orderTypeID'] = orderTypeID;
-    map['branchId'] = branchId;
-    map['branch'] = branch;
-    map['cashier'] = cashier;
-    map['tableNo'] = tableNo;
-    if (items != null) {
-      map['items'] = items.map((v) => v.toJson()).toList();
-    }
-    return map;
-  }
+
 }
 
 /// orderDetailsId : 99

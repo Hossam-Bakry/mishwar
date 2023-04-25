@@ -93,12 +93,17 @@ class CartOrderItem extends StatelessWidget {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  c.name,
-                                  style: TextStyle(
-                                    height: 1.0,
-                                    fontSize: 16,
-                                    color: Color(h.mainColor),
+                                Container(
+                                  width: MediaQuery.of(context).size.width * .51,
+                                  child: Text(
+                                    c.name,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      height: 1.0,
+                                      fontSize: 14,
+                                      color: Color(h.mainColor),
+                                    ),
                                   ),
                                 ),
                               ],

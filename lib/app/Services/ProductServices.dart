@@ -9,25 +9,29 @@ import 'package:mishwar/app/AppConfig.dart';
 
 class ProductServices {
 
+  var baseURL = GlobalVariables.url;
+
   getCategory() async {
     try {
       final response = await http.get(
-        Uri.parse('http://www.mishwar.elmasren.com/api/home/GetAllCategories'),
+        Uri.parse('${baseURL}/foodCategory/GetFoodCategories'),
         headers: await getHeader(),
       );
 
       if (response.statusCode == 200 && response.body != null) {
 
-        var Response = CategoryModel.fromJson(jsonDecode(response.body));
+        List categoryItems = json.decode(utf8.decode(response.bodyBytes));
 
-        appConfig.dApp.mainCategoryListFetch(Response.categoryDetail);
+        // var Response = CategoryModel.fromJson(jsonDecode(response.body));
+
+        appConfig.dApp.mainCategoryListFetch(categoryItems.map((e) => CategoryDetail.fromJson(e)).toList());
+        // appConfig.dApp.mainCategoryListFetch(Response.categoryDetail);
         appConfig.dApp.setSelectedCategory(appConfig.dApp.mainCategoryList[0]);
-        // print('from congig category ${appConfig.dApp.mainCategoryListFetch(Response.categoryDetail)}');
-        // print('from config ${appConfig.dApp.setSelectedCategory(appConfig.dApp.mainCategoryList[0])}');
+
       }
     } catch (e) {
       print('$e,,,,error main Products');
-      print('$e,,,,error main Products again');
+      // print('$e,,,,error main Products again');
     }
   }
 
@@ -36,19 +40,18 @@ class ProductServices {
 
     try {
       final response = await http.get(
-        Uri.parse(
-          'http://www.mishwar.elmasren.com/api/home/GetFoodItemsByCategoryID?categoryId=$id',
-        ),
+        Uri.parse('${baseURL}/FoodItem/GetFoodItemsByCategoryID?categoryId=$id'),
         headers: await getHeader(),
       );
       if (response.statusCode == 200 && response.body != null) {
 
-        var Response = ProductModel.fromJson(jsonDecode(response.body));
-        appConfig.dApp.mainProductsListFetch(Response.message);
+        List listOfProducts = jsonDecode(response.body);
+        List<ProductDetail> l = listOfProducts.map((e) => ProductDetail.fromJson(e)).toList();
+        appConfig.dApp.mainProductsListFetch(l);
 
-        // print('db subItem => ${appConfig.dApp.mainProductsList[0].subItems}');
-        // print('db price => ${appConfig.dApp.mainProductsList[0].price}');
-        // print('db food => ${appConfig.dApp.mainProductsList[0].foodCategoryId}');
+        // var Response = ProductModel.fromJson(jsonDecode(response.body));
+        // appConfig.dApp.mainProductsListFetch(Response.message);
+
       }
     } catch (e) {
       print('$e,,,,error main products');
@@ -58,9 +61,7 @@ class ProductServices {
   Future<List<SubProductDetail>> GetSubProduct(var id) async {
     try {
       final response = await http.get(
-        Uri.parse(
-          'http://www.mishwar.elmasren.com/api/home/GetSubItems?product_id=$id',
-        ),
+        Uri.parse('${baseURL}/home/GetSubItems?product_id=$id'),
         headers: await getHeader(),
       );
       print("000000000000000");
@@ -68,6 +69,27 @@ class ProductServices {
         var Response = SubProductModel.fromJson(jsonDecode(response.body));
         print('Response => $Response');
         return Response.subProductDetail;
+      }
+    } catch (e) {
+      print('$e,,,,error search doctors');
+    }
+  }
+  Future<List<ProductDetail>> GetAllPromosUpdate() async {
+
+    try {
+      final response = await http.get(
+        Uri.parse('${baseURL}/FoodItem/GetFoodItemsByCategoryID?categoryId=0'),
+        headers: await getHeader(),
+      );
+      print(' all promo => ${response.body}');
+      print("000000000000000");
+      if (response.statusCode == 200) {
+        Iterable l = json.decode(response.body);
+
+        List slideritems =
+        json.decode(response.body);
+        return slideritems.map((e) => ProductDetail.fromJson(e)).toList();
+
       }
     } catch (e) {
       print('$e,,,,error search doctors');
@@ -93,25 +115,6 @@ class ProductServices {
     }
   }
 
-  Future<List<Message>> GetAllPromosUpdate() async {
-
-    try {
-      final response = await http.get(
-        Uri.parse('http://www.mishwar.elmasren.com/api/home/GetPromotionItems'),
-        headers: await getHeader(),
-      );
-      print(' all promo => ${response.body}');
-
-      if (response.statusCode == 200) {
-
-        List slideritems = json.decode(response.body)["message"];
-        return slideritems.map((e) => Message.fromJson(e)).toList();
-
-      }
-    } catch (e) {
-      print('$e,,,,error search doctors');
-    }
-  }
 }
 
 ProductServices productServices = ProductServices();

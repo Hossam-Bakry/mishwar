@@ -10,19 +10,23 @@ AddressModel addressModelFromJson(String str) =>
 String addressModelToJson(AddressModel data) => json.encode(data.toJson());
 
 class AddressModel {
-  AddressModel(
-      {this.id,
-      this.isPrimary,
-      this.title,
-      this.address,
-      this.landMark,
-      this.phone1,
-      this.phone2,
-      this.lat,
-      this.lng,
-      this.region,
-      this.createdAt,
-      this.deliveryFee});
+  AddressModel({
+    this.id,
+    this.isPrimary,
+    this.title,
+    this.address,
+    this.landMark,
+    this.phone1,
+    this.phone2,
+    this.flat,
+    this.floor,
+    this.lat,
+    this.lng,
+    this.region,
+    this.regionId,
+    this.createdAt,
+    this.deliveryFee,
+  });
 
   String id;
   String isPrimary;
@@ -31,39 +35,44 @@ class AddressModel {
   String landMark;
   String phone1;
   dynamic phone2;
+  String flat;
+  String floor;
   String lat;
   String lng;
   String region;
+  int regionId;
   DateTime createdAt;
   final String deliveryFee;
 
   factory AddressModel.fromJson(Map<String, dynamic> json) => AddressModel(
-        id: json["id"],
-        isPrimary: json["is_primary"],
+        id: json["addressId"].toString(),
+        isPrimary: json["isPrimary"].toString(),
         title: json["title"],
-        address: json["address"],
-        landMark: json["land_mark"],
-        phone1: json["phone1"],
-        phone2: json["phone2"],
-        lat: json["lat"],
-        lng: json["lng"],
+        landMark: json["landMark"],
+        flat: json["flat"],
+        floor: json["floor"],
+        lat: json["latitude"],
+        lng: json["longitude"],
         region: json["region"],
-        createdAt: DateTime.parse(json["created_at"]),
-        deliveryFee: json["deliveryFee"] == null ? null : json["deliveryFee"],
+        regionId: json["regionId"],
+        // createdAt: DateTime.parse(json["createdDate"]),
+        deliveryFee: json["deliveryCost"] == null
+            ? null
+            : json["deliveryCost"].toString(),
       );
 
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "is_primary": isPrimary,
+        "addressId": id,
+        "isPrimary": isPrimary,
         "title": title,
-        "address": address,
-        "land_mark": landMark,
-        "phone1": phone1,
-        "phone2": phone2,
-        "lat": lat,
-        "lng": lng,
+        "landMark": landMark,
+        "flat": flat,
+        "floor": floor,
+        "latitude": lat,
+        "longitude": lng,
         "region": region,
-        "created_at": createdAt.toIso8601String(),
-        "deliveryFee": deliveryFee == null ? null : deliveryFee,
+        "regionId": regionId,
+        "createdDate": createdAt.toIso8601String(),
+        "deliveryCost": deliveryFee == null ? null : deliveryFee,
       };
 }

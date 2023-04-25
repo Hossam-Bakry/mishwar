@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 
 class GetDeliveryValueProvider extends ChangeNotifier {
 
-  double priceDelivery;
+  double priceDelivery = 0;
 
   void getDeliveryValue(double id) {
 

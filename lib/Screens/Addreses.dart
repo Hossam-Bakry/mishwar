@@ -23,9 +23,10 @@ class _state extends State<Adresses> {
   home h = new home();
   List<AddressModel> addressList;
   AddressServices addressServices = new AddressServices();
+  SharedPreferences prefs;
 
   loadData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
     addressList = await addressServices.GetAddresses(prefs.getString("UserId"));
     //  addressList=await addressServices.GetAddresses('4');
     setState(() {});
@@ -210,11 +211,15 @@ class _state extends State<Adresses> {
                                           GestureDetector(
                                               onTap: () async {
                                                 print("sssssssssssss");
-                                                Map<String, dynamic> responce =
+                                                // Map<String, dynamic> responce =
+                                                //   await addressServices.SetPrimaryAddress(
+                                                //             addressList[index].id);
+                                                var responce =
                                                     await addressServices
-                                                        .SetPrimaryAddress(
-                                                            addressList[index]
-                                                                .id);
+                                                        .setPrimaryaddress(
+                                                  prefs.getString("UserId"),
+                                                  addressList[index].id,
+                                                );
                                                 loadData();
                                                 print(responce);
                                                 setState(() {

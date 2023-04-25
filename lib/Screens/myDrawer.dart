@@ -21,6 +21,7 @@ import 'package:mishwar/Screens/sidemenuui/cart_side_menu_ui.dart';
 import 'Register.dart';
 import 'package:mishwar/Screens/sidemenuui/offers_side_menu_ui.dart';
 import 'Condition.dart';
+import 'check_mobile.dart';
 
 class MyDrawer extends StatefulWidget {
   @override
@@ -211,7 +212,7 @@ class _state extends State<MyDrawer> {
                         GestureDetector(
                           onTap: () {
                             Navigator.push(context,
-                                GlobalFunction.routeBottom(login("home")));
+                                GlobalFunction.routeBottom(Login("home")));
                           },
                           child: DottedBorder(
                               borderType: BorderType.RRect,
@@ -244,8 +245,11 @@ class _state extends State<MyDrawer> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            Navigator.push(context,
-                                GlobalFunction.routeBottom(Register()));
+
+                            Navigator.push(context, GlobalFunction.routeBottom(CheckMobile()));
+
+                            // Navigator.push(context,
+                            //     GlobalFunction.routeBottom(Register()));
                           },
                           child: Container(
                             width: MediaQuery.of(context).size.width * .35,

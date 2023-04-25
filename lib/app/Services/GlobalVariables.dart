@@ -7,7 +7,9 @@ class GlobalVariables {
   // http://93.112.4.175/app/
   // static String URL="https://www.edumisr.com/APP_API/Hyper";
   static String URL = "http://195.181.247.217/app";
-  static String url = "http://www.mishwar.elmasren.com/api";
+
+  static String url = "http://www.mishwardev.com/api";
+  // static String url = "http://www.mishwar.elmasren.com/api";
 //  static String URL="http://www.mishwar.elmasren.com/api";
 //  static  var Header={
 //    "Content-Type":"application/json",

@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mishwar/main.dart';
 
@@ -171,7 +170,7 @@ class _state extends State<Offers2>{
                                 ),color: Color(h.blueColor),),
                               height: MediaQuery.of(context).size.height*.042,
                               width: MediaQuery.of(context).size.width*.425,
-                              child:   FlatButton(
+                              child:   ElevatedButton(
                                   child: Text("العرض لمدة 24 ساعة",style: TextStyle(color:Colors.white,fontSize: 10),),
                                   onPressed:(){
                                     Navigator.pushNamed(context, "/404");
@@ -278,7 +277,7 @@ class _state extends State<Offers2>{
                                 ),color: Color(h.blueColor),),
                               height: MediaQuery.of(context).size.height*.042,
                               width: MediaQuery.of(context).size.width*.425,
-                              child:   FlatButton(
+                              child:   ElevatedButton(
                                   child: Text("العرض لمدة 24 ساعة",style: TextStyle(color:Colors.white,fontSize: 10),),
                                   onPressed:(){
                                     Navigator.pushNamed(context, "/404");
@@ -416,7 +415,7 @@ class _state extends State<Offers2>{
                                   ),color: Color(h.blueColor),),
                                 height: MediaQuery.of(context).size.height*.042,
                                 width: MediaQuery.of(context).size.width*.4,
-                                child:   FlatButton(
+                                child:   ElevatedButton(
                                     child: Text("العرض لمدة 24 ساعة",style: TextStyle(color:Colors.white,fontSize: 10),),
                                     onPressed:(){
                                       Navigator.pushNamed(context, "/404");

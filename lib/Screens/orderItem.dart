@@ -4,12 +4,14 @@ import 'package:mishwar/Model/OrdersModel.dart';
 import 'package:mishwar/lang/app_Localization.dart';
 import 'package:mishwar/main.dart';
 
+import '../Model/OrderDetails.dart';
+
 class OrderItem extends StatelessWidget {
-  final Items orderDetail;
+  final OrderDetails orderDetail;
   final String orderDate;
 
 
-  OrderItem({Key key, this.orderDetail, this.orderDate}) : super(key: key);
+  OrderItem({Key key, this.orderDetail, this.orderDate = ""}) : super(key: key);
   final home h = new home();
   String offerprice = '';
 
@@ -35,7 +37,7 @@ class OrderItem extends StatelessWidget {
       decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(10)),
           border:
-              Border.all(width: 1.0, color: Colors.black12.withOpacity(.05)),
+          Border.all(width: 1.0, color: Colors.black12.withOpacity(.05)),
           color: Colors.white,
           boxShadow: [
             BoxShadow(
@@ -60,7 +62,7 @@ class OrderItem extends StatelessWidget {
                           color: Colors.white),
                       width: MediaQuery.of(context).size.width * .25,
                       height: orderDetail.notes.toString().isEmpty ||
-                              orderDetail.notes == null
+                          orderDetail.notes == null
                           ? MediaQuery.of(context).size.height * .12
                           : MediaQuery.of(context).size.height * .15,
                       child: ClipRRect(
@@ -69,20 +71,20 @@ class OrderItem extends StatelessWidget {
                             bottomRight: Radius.circular(10)),
                         child: orderDetail.image == null
                             ? Image.asset(
-                                'images/prodcut4.png',
-                                width: MediaQuery.of(context).size.width * .9,
-                                height:
-                                    MediaQuery.of(context).size.height * .08,
-                                fit: BoxFit.cover,
-                              )
+                          'images/prodcut4.png',
+                          width: MediaQuery.of(context).size.width * .9,
+                          height:
+                          MediaQuery.of(context).size.height * .08,
+                          fit: BoxFit.cover,
+                        )
                             : FadeInImage.assetNetwork(
-                                placeholder: "images/prodcut4.png",
-                                image: orderDetail.image,
-                                width: MediaQuery.of(context).size.width * .9,
-                                height:
-                                    MediaQuery.of(context).size.height * .08,
-                                fit: BoxFit.cover,
-                              ),
+                          placeholder: "images/prodcut4.png",
+                          image: orderDetail.image,
+                          width: MediaQuery.of(context).size.width * .9,
+                          height:
+                          MediaQuery.of(context).size.height * .08,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                     SizedBox(
@@ -107,7 +109,7 @@ class OrderItem extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  orderDetail.itemName,
+                                  orderDetail.itemName ?? "",
                                   style: TextStyle(
                                       height: 1.0,
                                       fontSize: 14,
@@ -158,15 +160,15 @@ class OrderItem extends StatelessWidget {
                             ),
                           ),
                           orderDetail.notes.toString().isEmpty ||
-                                  orderDetail.notes == null
+                              orderDetail.notes == null
                               ? Container(height: 0)
                               : Text(
-                                  orderDetail.notes.toString(),
-                                  style: TextStyle(
-                                      color: Colors.black, fontSize: 11),
-                                ),
+                            orderDetail.notes.toString(),
+                            style: TextStyle(
+                                color: Colors.black, fontSize: 11),
+                          ),
                           if (offerprice != '') Text(
-                              // '',
+                            // '',
                               'الاجمالي = ${(double.parse(offerprice) + (double.parse(orderDetail.totalValue.toString()) * double.parse(orderDetail.quantity.toString()))).toStringAsFixed(2)} ريال'),
                           // 'الاجمالي = ${(double.parse(offerprice) + (double.parse(orderDetail.details.salePrice) * double.parse(orderDetail.details.quantity))).toStringAsFixed(2)} ريال')
                         ],

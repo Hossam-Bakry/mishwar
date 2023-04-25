@@ -386,7 +386,7 @@ class _state extends State<Cart> {
                           if (home.username == null) {
                             Navigator.push(
                               context,
-                              GlobalFunction.routeBottom(login("cart")),
+                              GlobalFunction.routeBottom(Login("cart")),
                             );
                           } else {
                             Navigator.push(

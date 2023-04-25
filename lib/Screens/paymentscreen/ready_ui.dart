@@ -5,21 +5,21 @@
 // import 'package:flutter/services.dart';
 // import 'package:http/http.dart' as http;
 // import 'package:shared_preferences/shared_preferences.dart';
-
+//
 // class Ready_UI extends StatefulWidget {
-
-
+//
+//
 //   @override
 //   _Ready_UIState createState() => _Ready_UIState();
 // }
-
+//
 // String _checkoutid = '';
 // String _resultText = '';
-
+//
 // class _Ready_UIState extends State<Ready_UI> {
-
+//
 //   static const platform = const MethodChannel('Hyperpay.demo.fultter/channel');
-
+//
 //   @override
 //   Widget build(BuildContext context) {
 //     return MaterialApp(
@@ -76,27 +76,27 @@
 //       ),
 //     );
 //   }
-
+//
 //   Future<void> _checkoutpage(String type) async {
 //     //  requestCheckoutId();
-
+//
 //     var status;
-
+//
 //    Uri myUrl = Uri.parse("http://dev.hyperpay.com/hyperpay-demo/getcheckoutid.php");
 //     final response = await http.post(
 //       myUrl,
 //       headers: {'Accept': 'application/json'},
 //     );
 //     status = response.body.contains('error');
-
+//
 //     var data = json.decode(response.body);
-
+//
 //     if (status) {
 //       print('data : ${data["error"]}');
 //     } else {
 //       print('data : ${data["id"]}');
 //       _checkoutid = '${data["id"]}';
-
+//
 //       String transactionStatus;
 //       try {
 //         final String result = await platform.invokeMethod('gethyperpayresponse',
@@ -106,7 +106,7 @@
 //       } on PlatformException catch (e) {
 //         transactionStatus = "${e.message}";
 //       }
-
+//
 //       if (transactionStatus != null ||
 //           transactionStatus == "success" ||
 //           transactionStatus == "SYNC") {
@@ -119,26 +119,26 @@
 //       }
 //     }
 //   }
-
+//
 //   Future<void> getpaymentstatus() async {
 //     var status;
-
+//
 //     Uri myUrl = Uri.parse("http://dev.hyperpay.com/hyperpay-demo/getpaymentstatus.php?id=$_checkoutid");
 //     final response = await http.post(
 //       myUrl,
 //       headers: {'Accept': 'application/json'},
 //     );
 //     status = response.body.contains('error');
-
+//
 //     var data = json.decode(response.body);
-
-
+//
+//
 //     print("payment_status: ${data["result"].toString()}");
-
+//
 //     setState(() {
 //       _resultText = data["result"].toString();
 //     });
-
-
+//
+//
 //   }
 // }

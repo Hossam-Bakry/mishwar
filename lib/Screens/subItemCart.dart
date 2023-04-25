@@ -110,17 +110,23 @@ class _SubItemCartState extends State<SubItemCart> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                widget.c.name,
-                                // widget.c.selectedTypeName != null
-                                //     ? widget.c.selectedTypeName.toString()
-                                //     :
-                                    // DemoLocalizations.of(context).title['Offers'],
-                                    // widget.c.name,
-                                style: TextStyle(
-                                  height: 1.0,
-                                  fontSize: 10,
-                                  color: Color(h.mainColor),
+                              Container(
+                                width: MediaQuery.of(context).size.width * .51,
+                                child: Text(
+                                  widget.c.name,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  // widget.c.selectedTypeName != null
+                                  //     ? widget.c.selectedTypeName.toString()
+                                  //     :
+                                      // DemoLocalizations.of(context).title['Offers'],
+                                      // widget.c.name,
+                                  style: TextStyle(
+
+                                    height: 1.0,
+                                    fontSize: 10,
+                                    color: Color(h.mainColor),
+                                  ),
                                 ),
                               ),
                               Container(

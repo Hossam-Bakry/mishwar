@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mishwar/Model/AddressModel.dart';
 import 'package:mishwar/Screens/GlobalFunction.dart';
 import 'package:mishwar/app/Services/AddressServices.dart';
 import 'package:mishwar/app/Services/OrderServices.dart';
+import 'package:mishwar/app/Services/PaymentService.dart';
 import 'package:mishwar/main.dart';
 import 'package:provider/provider.dart';
 import '../dbHelper.dart';
@@ -16,6 +19,7 @@ import 'package:mishwar/lang/app_Localization.dart';
 import 'package:mishwar/app/AppConfig.dart';
 
 import 'cartOrderItem.dart';
+import 'confirmedorderui/onlinePayment.dart';
 
 class CartOrder extends StatefulWidget {
   @override
@@ -37,31 +41,38 @@ class _state extends State<CartOrder> {
   SharedPreferences prefs;
   List<AddressModel> addressList;
   double deliverCost = 0;
+  String visaType = "VISA";
+  var checkoutId;
+
+  int orderNumber;
 
   loadData() async {
     dataLocal = await db.allProduct();
     setState(() {});
   }
 
-  getDeliveryCost() async {
+  Future<void> getDeliveryCost() async {
     prefs = await SharedPreferences.getInstance();
     addressList = await addressServices.GetAddresses(prefs.getString("UserId"));
     print('address => $addressList');
 
-    for (int i = 0; i < addressList.length; i++) {
-      if (addressList[i].isPrimary == "1") {
-        deliverCost = double.parse(addressList[i].deliveryFee);
-        break;
-      }
-      // addressList[i].isPrimary == "1"
-      //     ? deliverCost =  double.parse(addressList[i].deliveryFee )
-      // // prefs.setString("address_id", addressList[i].id)
-      //     : print("s");
-    }
-    setState(() {});
+    deliverCost = Provider.of<GetDeliveryValueProvider>(context, listen: false)
+        .priceDelivery;
+
+    // for (int i = 0; i < addressList.length; i++) {
+    //   if (addressList[i].isPrimary == "1") {
+    //     deliverCost = double.parse(addressList[i].deliveryFee);
+    //     break;
+    //   }
+    //   // addressList[i].isPrimary == "1"
+    //   //     ? deliverCost =  double.parse(addressList[i].deliveryFee )
+    //   // // prefs.setString("address_id", addressList[i].id)
+    //   //     : print("s");
+    // }
+    // setState(() {});
   }
 
-  getTotal() async {
+  Future<bool> getTotal() async {
     print("555555555555555555555555");
     List product = await db.allProduct();
     // home.c=product.length;
@@ -77,15 +88,29 @@ class _state extends State<CartOrder> {
       print('quan => $totalquantity');
       setState(() {});
     }
+    String amount = allPrice.toString();
+    print("amount : $amount");
+    if (allPrice == 0) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
   @override
   void initState() {
-    // TODO: implement initState
-    super.initState();
     loadData();
-    getTotal();
     getDeliveryCost();
+    Future.wait([
+      getTotal(),
+    ]).then((value) {
+      print(allPrice);
+      print(deliverCost);
+      if (value[0] == true) {
+        print(value[0]);
+      }
+    });
+    super.initState();
   }
 
   @override
@@ -241,15 +266,15 @@ class _state extends State<CartOrder> {
                           style: TextStyle(fontSize: 12),
                         ),
                       ),
-                      Container(
-                        width: MediaQuery.of(context).size.width * .55,
-                        child: Text(
-                          appConfig.prefs.getString('paymethodtext'),
-                          // "الدفع عند الاستلام"
-                          // appConfig.prefs.getString('paymethod'),
-                          style: TextStyle(fontSize: 12),
-                        ),
-                      )
+                      // Container(
+                      //   width: MediaQuery.of(context).size.width * .55,
+                      //   child: Text(
+                      //     appConfig.prefs.getString('paymethodtext'),
+                      //     // "الدفع عند الاستلام"
+                      //     // appConfig.prefs.getString('paymethod'),
+                      //     style: TextStyle(fontSize: 12),
+                      //   ),
+                      // )
                     ],
                   ),
                 ),
@@ -455,7 +480,11 @@ class _state extends State<CartOrder> {
                             decoration: BoxDecoration(),
                             alignment: Alignment.center,
                             child: Text(
-                              ((allPrice).toStringAsFixed(2)).toString() +
+                              ((allPrice) +
+                                          Provider.of<GetDeliveryValueProvider>(
+                                                  context)
+                                              .priceDelivery)
+                                      .toStringAsFixed(2) +
                                   DemoLocalizations.of(context)
                                       .title['currency'],
                               style: TextStyle(fontSize: 13),
@@ -488,12 +517,11 @@ class _state extends State<CartOrder> {
                         Text(
                             DemoLocalizations.of(context).title['Total'] +
                                 " " +
-                                (allPrice +
+                                ((allPrice) +
                                         Provider.of<GetDeliveryValueProvider>(
-                                                context,
-                                                listen: false)
+                                                context)
                                             .priceDelivery)
-                                    .toString() +
+                                    .toStringAsFixed(2) +
                                 " " +
                                 DemoLocalizations.of(context).title['currency'],
                             style:
@@ -510,72 +538,132 @@ class _state extends State<CartOrder> {
                     ),
                   ),
                   onTap: () async {
-                    SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                    print(prefs.getString("UserId"));
-                    print(prefs.getString("address_id"));
-                    print("ssssssssssssss");
-                    //  Navigator.push(context, GlobalFunction.routeBottom(Black()));
-                    List Products = [];
-                    for (int i = 0; i < dataLocal.length; i++) {
-                      CartMedelLocal c =
-                          new CartMedelLocal.fromMap(dataLocal[i]);
-                      Items item = new Items(
-                        ItemID: c.id.toString(),
-                        Notes: c.offerName,
-                        Quantity: c.quantity.toString(),
-                        SalePrice: c.price2.toString(),
-                        TotalValue: (c.price2 * c.quantity).toString(),
-                        SubTotal: ((c.price2 * c.quantity) + ((c.price2 * c.quantity) * .15))
-                            .toString(),
-                      );
-                      Products.add(item.toJson());
-                    }
-                    print('products => $Products');
-                    print(Products.length);
-                    print(
-                        "00000000000000000000000000000000000000000000000000000000000000");
+
                     var body = {
-                      "userID": prefs.getString("UserId"),
-                      "subTotal": allPrice,
-                      "tax": tax,
-                      "totalValue": allPrice + deliverCost,
-                      "addressID": prefs.getString("address_id"),
-                      'appDeliveryType': appConfig.prefs.getInt('delmethodvalue'),
-                      "appPaymentType": appConfig.prefs.getInt('paymethodvalue'),
-                      "notes": "",
-                      "items": Products
+                      "entityId": "8ac7a4c77b1ac40a017b259fa4be1666",
+                      "amount": allPrice+deliverCost,
+                      "currency": "SAR",
+                      "paymentType": "DB",
+                      "VisaType": visaType,
                     };
-                    print(body);
-                    print("0000000000000000000000000000000000000000");
-                    Map<String, dynamic> data =
-                        await orderServvices.MakeOrderUpdate(
-                      body,
-                      prefs.getString("UserId"),
-                      Provider.of<GetUserBranch>(context, listen: false).branchId ,
-                    );
-                    print(' branchId : ${Provider.of<GetUserBranch>(context, listen: false).branchId}');
-                    print(data);
-                    if (data["statusCode"] == 200) {
-                      print(data);
-                      // AddToCard(context);
+                    PaymentService()
+                        .getCheckoutId(body: body)
+                        .then((value) {
+                      // checkoutId = value;
+                      print("value: $value");
 
-                      ///int quantity,int order_id,double subtotal,double totle,double tax
-
-                      Navigator.push(
+                      if (value.isNotEmpty) {
+                        Navigator.push(
                           context,
-                          GlobalFunction.routeBottom(OrderSuccess(
-                            totalquantity,
-                            data['key'],
-                            allPrice,
-                            this.allPrice,
-                            this.tax,
-                            deliverCost,
-                          )));
+                          GlobalFunction.route(
+                            OnlinePaymentWebView(
+                              checkoutId: value,
+                            ),
+                          ),
+                        );
+                      }
+                    });
 
-                      db.deleteCart();
-                      prefs.remove("address_id");
-                    }
+                    // SharedPreferences prefs =
+                    //     await SharedPreferences.getInstance();
+                    // print(prefs.getString("UserId"));
+                    // print(prefs.getString("address_id"));
+                    // print("ssssssssssssss");
+                    // //  Navigator.push(context, GlobalFunction.routeBottom(Black()));
+                    // List Products = [];
+                    // for (int i = 0; i < dataLocal.length; i++) {
+                    //   CartMedelLocal c =
+                    //       new CartMedelLocal.fromMap(dataLocal[i]);
+                    //   Items item = new Items(
+                    //     ItemID: c.id,
+                    //     Notes: c.offerName,
+                    //     Quantity: c.quantity,
+                    //     SalePrice: c.price2,
+                    //     TotalValue: (c.price2 * c.quantity),
+                    //     SubTotal: ((c.price2 * c.quantity) +
+                    //         ((c.price2 * c.quantity) * .15)),
+                    //   );
+                    //   Products.add(item.toJson());
+                    // }
+                    // print('products => $Products');
+                    // print(Products.length);
+                    // print(
+                    //     "00000000000000000000000000000000000000000000000000000000000000");
+                    // var body = {
+                    //   "UserID": prefs.getString("UserId"),
+                    //   "branchId": 1,
+                    //   "SubTotal": allPrice,
+                    //   "Tax": tax,
+                    //   "TotalValue": allPrice + Provider.of<GetDeliveryValueProvider>(context).priceDelivery,
+                    //   "addressID": prefs.getString("address_id"),
+                    //   'appDeliveryType':
+                    //   appConfig.prefs.getInt('delmethodvalue'),
+                    //   // "appPaymentType":
+                    //   //     appConfig.prefs.getInt('paymethodvalue'),
+                    //   "PaymentTypeId": appConfig.prefs.getInt('paymethodvalue'),
+                    //   "IsOnlineOrder": true,
+                    //   "OrderStatusId": "1",
+                    //   "OrderTypeID": "3",
+                    //   "OrderNumber": 0,
+                    //   "notes": "",
+                    //   "items": Products
+                    // };
+                    // print(body);
+                    // print("0000000000000000000000000000000000000000");
+                    // var data = await orderServvices.MakeOrderUpdate(body);
+                    // print(' branchId : ${Provider.of<GetUserBranch>(context, listen: false).branchId}');
+                    // print(data);
+                    // if (prefs.getInt("paymethodvalue") == 1) {
+                    //   // pay on delivry
+                    //   var data = await orderServvices.MakeOrderUpdate(body);
+                    //   print(
+                    //       ' branchId : ${Provider.of<GetUserBranch>(context, listen: false).branchId}');
+                    //   print(data);
+                    //   if (data.statusCode == 200) {
+                    //     print(data);
+                    //     orderNumber = json.decode(data.body)["item1"];
+                    //     debugPrint("orderNumber: $orderNumber");
+                    //     // AddToCard(context);
+                    //
+                    //     ///int quantity,int order_id,double subtotal,double totle,double tax
+                    //
+                    //     Navigator.push(
+                    //       context,
+                    //       GlobalFunction.routeBottom(
+                    //         OrderSuccess(
+                    //           totalquantity, // total quantity
+                    //           orderNumber,
+                    //           // data['key'],
+                    //           allPrice,
+                    //           this.allPrice,
+                    //           this.tax,
+                    //           deliverCost ?? 0,
+                    //         ),
+                    //       ),
+                    //     );
+                    //
+                    //     db.deleteCart();
+                    //     prefs.remove("address_id");
+                    //   }
+                    // } else if (prefs.getInt("paymethodvalue") == 2) {
+                    //   // Navigator.of(context).push(
+                    //   //   MaterialPageRoute(
+                    //   //     builder: (context) => PaymentTab(
+                    //   //       (allPrice + deliverCost),
+                    //   //       body,
+                    //   //       prefs.getString("UserId"),
+                    //   //       Provider.of<GetUserBranch>(context, listen: false)
+                    //   //           .branchId,
+                    //   //       totalquantity,
+                    //   //       orderNumber,
+                    //   //       allPrice,
+                    //   //       this.allPrice,
+                    //   //       this.tax,
+                    //   //       deliverCost,
+                    //   //     ),
+                    //   //   ),
+                    //   // );
+                    // }
                   },
                 ),
               ],
@@ -680,15 +768,14 @@ class _state extends State<CartOrder> {
       ),
     );
   }
-
 }
 
 class Items {
-  String ItemID;
-  String Quantity;
-  String SalePrice;
-  String SubTotal;
-  String TotalValue;
+  int ItemID;
+  int Quantity;
+  double SalePrice;
+  double SubTotal;
+  double TotalValue;
   String Notes;
 
   Items({

@@ -3,6 +3,10 @@
 //     final categoryModel = categoryModelFromJson(jsonString);
 
 import 'dart:convert';
+import 'dart:ui';
+
+import '../app/AppConfig.dart';
+
 //
 // CategoryModel categoryModelFromJson(String str) => CategoryModel.fromJson(json.decode(str));
 //
@@ -122,38 +126,28 @@ class CategoryModel {
 /// isPromotion : false
 
 class CategoryDetail {
-
   int id;
-  int parentId;
   String name;
   String description;
-  int itemIndex;
-  dynamic isLoloGroup;
-  bool isPromotion;
   String image;
 
   CategoryDetail.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    parentId = json['parentId'];
-    name = json['name'];
+    id = json['foodCategoryId'];
+    name = json["nameAr"] == null
+        ? null
+        : appConfig.cApp.appLocale == Locale("en")
+            ? json["nameEn"]
+            : json["nameAr"];
     description = json['description'];
-    itemIndex = json['itemIndex'];
-    isLoloGroup = json['isLoloGroup'];
-    isPromotion = json['isPromotion'];
     image = json['image'];
   }
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map['id'] = id;
-    map['parentId'] = parentId;
     map['name'] = name;
     map['description'] = description;
-    map['itemIndex'] = itemIndex;
-    map['isLoloGroup'] = isLoloGroup;
-    map['isPromotion'] = isPromotion;
     map['image'] = image;
     return map;
   }
 }
-

@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
@@ -25,27 +27,24 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.app.mishwar</string>
+				<string>com.hyper.mishwar.payments</string>
 			</array>
 		</dict>
-		<dict/>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.hyper.mishwar.payments</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
-		<string>comgooglemaps</string>
-		<string>baidumap</string>
-		<string>iosamap</string>
-		<string>waze</string>
-		<string>yandexmaps</string>
-		<string>yandexnavi</string>
-		<string>citymapper</string>
-		<string>mapswithme</string>
-		<string>osmandmaps</string>
-		<string>dgis</string>
-		<string>qqmap</string>
-		<string>here-location</string>
+		<string>sms</string>
+		<string>tel</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
@@ -74,7 +73,11 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<key>NSCameraUsageDescription</key>
+	<string>to scan qr code</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>to deliver food to you</string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 </dict>
 </plist>

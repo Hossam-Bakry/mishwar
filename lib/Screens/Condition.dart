@@ -1,7 +1,6 @@
 import 'package:dotted_border/dotted_border.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
+// import 'package:flutter_html/flutter_html.dart';
 import 'package:mishwar/Screens/myDrawer.dart';
 import 'package:mishwar/app/Services/ConfigServices.dart';
 import 'package:mishwar/lang/app_Localization.dart';
@@ -97,9 +96,10 @@ class _state extends State<Condition> {
                               right: MediaQuery.of(context).size.width * .05,
                               top: MediaQuery.of(context).size.height * .025,
                               bottom: MediaQuery.of(context).size.height * .02),
-                          child: Html(
-                            data: data["Message"]["text"],
-                          ) /*Text(data["Message"]["text"],
+                          // child: Html(
+                          //   data: data["Message"]["text"],
+                          // )
+                        /*Text(data["Message"]["text"],
                         style: TextStyle(fontSize: 12,color: Colors.black54),textAlign: TextAlign.center,
                       ),*/
                           ),

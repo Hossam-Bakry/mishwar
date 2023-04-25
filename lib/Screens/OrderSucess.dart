@@ -80,9 +80,11 @@ class _state extends State<OrderSuccess> {
               Text(
                 DemoLocalizations.of(context)
                     .title['operationaccomplishedsuccessfully'],
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                     color: Color(h.blueColor),
-                    fontSize: 25,
+                    fontSize: 22,
                     fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),

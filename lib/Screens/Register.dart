@@ -1,8 +1,8 @@
 import 'package:country_code_picker/country_code_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:mishwar/app/Services/UserServices.dart';
+import 'package:mishwar/app/Services/snackbar_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mishwar/lang/app_Localization.dart';
 import '../main.dart';
@@ -10,6 +10,11 @@ import 'GlobalFunction.dart';
 import 'Verification.dart';
 
 class Register extends StatefulWidget {
+
+  String phoneNumber;
+
+  Register({this.phoneNumber});
+
   @override
   State<StatefulWidget> createState() {
     return signInState();
@@ -17,9 +22,14 @@ class Register extends StatefulWidget {
 }
 
 class signInState extends State<Register> {
+
+
+
   UserServices userServices = new UserServices();
   home h = new home();
   Map<String, dynamic> data;
+
+  // Map<String, dynamic> data;
   TextEditingController name = new TextEditingController();
   TextEditingController phone = new TextEditingController();
   TextEditingController email = new TextEditingController();
@@ -32,7 +42,7 @@ class signInState extends State<Register> {
   final password2Node = FocusNode();
   bool passVisibility = true;
   bool passVisibility2 = true;
-  var key = "+966";
+  var key = "00966";
   final formKey = GlobalKey<FormState>();
   String error;
   bool isError = false;
@@ -73,9 +83,15 @@ class signInState extends State<Register> {
                 SizedBox(
                   height: MediaQuery.of(context).size.height * .05,
                 ),
-                Image.asset(
-                  "images/logo.png",
-                  height: MediaQuery.of(context).size.height * .2,
+                Container(
+                  height: 190,
+                  width: 190,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('images/logo.png'),
+                    ),
+
+                  ),
                 ),
                 SizedBox(
                   height: MediaQuery.of(context).size.height * .012,
@@ -91,6 +107,7 @@ class signInState extends State<Register> {
                   key: formKey,
                   child: Column(
                     children: [
+                      // user Name
                       Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -148,13 +165,14 @@ class signInState extends State<Register> {
                       SizedBox(
                         height: 20,
                       ),
+                      // phone number
                       Directionality(
                         textDirection: TextDirection.rtl,
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              width: MediaQuery.of(context).size.width * .66,
+                              width: MediaQuery.of(context).size.width * .62,
                               decoration: BoxDecoration(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(10)),
@@ -162,6 +180,8 @@ class signInState extends State<Register> {
                               child: TextFormField(
                                 focusNode: phoneNode,
                                 keyboardType: TextInputType.phone,
+                                initialValue: widget.phoneNumber,
+                                enabled: false,
                                 onFieldSubmitted: (value) {
                                   FocusScope.of(context)
                                       .requestFocus(emailNode);
@@ -185,6 +205,10 @@ class signInState extends State<Register> {
                                         borderRadius: BorderRadius.circular(10),
                                         borderSide: BorderSide(
                                             color: Color(h.borderColor))),
+                                    border: new OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                        borderSide: BorderSide(
+                                            color: Color(h.borderColor))),
                                     focusedBorder: new OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),
                                         borderSide: BorderSide(
@@ -202,19 +226,20 @@ class signInState extends State<Register> {
                                       size: 20,
                                       color: Colors.black45,
                                     ),
-                                    hintText: '050000000',
-                                    hintStyle: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 12,
-                                        color: Colors.black45)),
-                                controller: phone,
+                                    // hintText: '050000000',
+                                    // hintStyle: TextStyle(
+                                    //     fontWeight: FontWeight.bold,
+                                    //     fontSize: 12,
+                                    //     color: Colors.black45),
+                                ),
+                                // controller: phone,
                               ),
                             ),
                             SizedBox(
                               width: MediaQuery.of(context).size.width * .02,
                             ),
                             Container(
-                                width: MediaQuery.of(context).size.width * .22,
+                                width: MediaQuery.of(context).size.width * .26,
                                 height: 47,
                                 decoration: BoxDecoration(
                                   borderRadius:
@@ -255,6 +280,7 @@ class signInState extends State<Register> {
                                         });
                                         print(key);
                                       },
+                                      enabled: false,
                                       dialogTextStyle: TextStyle(
                                           color: Colors.black45,
                                           fontWeight: FontWeight.bold,
@@ -415,11 +441,15 @@ class signInState extends State<Register> {
                           focusNode: password2Node,
                           obscureText: passVisibility2,
                           validator: (value) {
-                            if (value.isEmpty) {
+                            if(value.isEmpty) {
                               return DemoLocalizations.of(context)
                                   .title['confirmnewpasswordrequired'];
+                            } else if (value.compareTo(password.text) != 0 ) {
+                              return DemoLocalizations.of(context)
+                                  .title['confirmnewpasswordnotmatched'];
+                            } else {
+                              return null;
                             }
-                            return null;
                           },
                           decoration: InputDecoration(
                             errorStyle: TextStyle(
@@ -494,44 +524,63 @@ class signInState extends State<Register> {
                 ),
                 GestureDetector(
                   onTap: () async {
+
                     if (formKey.currentState.validate()) {
-                      SharedPreferences pref =
-                          await SharedPreferences.getInstance();
+                      SharedPreferences pref = await SharedPreferences.getInstance();
                       print(
                         pref.getString("token"),
                       );
-                      if (phone.text.substring(0, 1) == "0") {
-                        setState(() {
-                          phone.text = phone.text.substring(1);
-                        });
-                        print(phone.text);
-                        print(
-                            "0000000000000000000000000000000000000000000000000");
-                      }
+                      print(key + widget.phoneNumber);
+
+                      // if (phone.text.substring(0, 1) == "0") {
+                      //   setState(() {
+                      //     phone.text = phone.text.substring(1);
+                      //   });
+                      //   print(key + widget.phoneNumber);
+                      //   print(
+                      //       "0000000000000000000000000000000000000000000000000");
+                      // }
                       data = await userServices.RegisterServices(
                         name.text,
                         email.text,
                         password.text,
-                        password2.text,
-                        key + phone.text,
-                        pref.getString("token"),
+                        widget.phoneNumber
                       );
-                      if (data["StatusCode"] == 200) {
-                        setData("UserId", data["Message"]["user_id"]);
-                        setData("UserType",
-                            data["Message"]["user_roles"].toString());
-                        Navigator.push(
-                            context,
-                            GlobalFunction.route(verification(
-                              "register",
-                              key + phone.text,
-                            )));
-                      } else {
-                        setState(() {
-                          error = data["Message"];
-                          isError = false;
-                        });
+                      if(data["responseCode"] == 200) {
+                        EasyLoading.dismiss();
+                        SnackBarService.showSuccessMessage(
+                          DemoLocalizations.of(context)
+                              .title["youRegisteredSuccessfully"],
+                        );
+                        setData("UserId", data["userID"]);
+                        setData("UserType", "1");
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, "/VerificationDone", (route) => false);
+                      } else if(data["responseCode"] == 100){
+                        SnackBarService.showErrorMessage(
+                          DemoLocalizations.of(context)
+                              .title["thisUserAleardyExist"],
+                        );
+                        EasyLoading.dismiss();
                       }
+                      // if (data == -1) {
+                      //   SnackBarService.showErrorMessage(
+                      //     DemoLocalizations.of(context)
+                      //         .title["thisUserAleardyExist"],
+                      //   );
+                      //   EasyLoading.dismiss();
+                      // } else {
+                      //   EasyLoading.dismiss();
+                      //   SnackBarService.showErrorMessage(
+                      //     DemoLocalizations.of(context)
+                      //         .title["youRegisteredSuccessfully"],
+                      //   );
+                      //   setData("UserId", data.toString());
+                      //   setData("UserType", "1");
+                      //   Navigator.pushNamedAndRemoveUntil(
+                      //       context, "/VerificationDone", (route) => false);
+                      // }
+
                     } else {
                       setState(() {
                         isError = true;

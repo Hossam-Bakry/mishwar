@@ -157,6 +157,9 @@ class _GoogleMapBodyState extends State<GoogleMapBody> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.red,
+      ),
       key: scaffoldKey,
       body: init == true
           ? Center(

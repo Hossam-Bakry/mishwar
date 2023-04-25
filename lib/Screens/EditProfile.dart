@@ -12,7 +12,10 @@ import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 
+import '../app/AppConfig.dart';
 import '../main.dart';
+import 'GlobalFunction.dart';
+import 'HomePage.dart';
 
 class EditProfile extends StatefulWidget {
   @override
@@ -31,6 +34,8 @@ class editProfileState extends State<EditProfile> {
   final formKey = GlobalKey<FormState>();
   home h = new home();
 
+  UserServices _userServices = UserServices();
+
   TextEditingController name = new TextEditingController();
   TextEditingController password = new TextEditingController();
   TextEditingController phone = new TextEditingController();
@@ -39,9 +44,10 @@ class editProfileState extends State<EditProfile> {
   var UserId;
   UserServices userServices = new UserServices();
   Map<String, dynamic> data;
+  SharedPreferences prefs;
 
   loadData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs = await SharedPreferences.getInstance();
     data = await userServices.getUserData(prefs.getString("UserId"));
     name.text = data["name"];
     phone.text = data["phone"];
@@ -87,7 +93,7 @@ class editProfileState extends State<EditProfile> {
               child: Text(
                 //save
                 DemoLocalizations.of(context).title['save'],
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: Colors.white, fontSize: 18),
               ),
             ),
             onTap: () async {
@@ -98,15 +104,14 @@ class editProfileState extends State<EditProfile> {
                   });
                 }
                 ;
-                Map<String, dynamic> responce =
-                await userServices.updateProfile(UserId, name.text, email.text, phone.text);
+                Map<String, dynamic> responce = await userServices
+                    .updateProfile(UserId, name.text, email.text, phone.text);
                 if (responce["StatusCode"] == 200)
                   Navigator.pushNamedAndRemoveUntil(
                       context, "/mainPage", (route) => false);
                 else {
                   Toast.show("${responce["Message"]}", context,
-                      duration: Toast.LENGTH_SHORT,
-                      gravity: Toast.BOTTOM);
+                      duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
                 }
               }
             },
@@ -180,11 +185,11 @@ class editProfileState extends State<EditProfile> {
             ),
           ),*/
           Container(
+            width: double.infinity,
             padding: EdgeInsets.only(
-              right: MediaQuery.of(context).size.width * .05,
-              left: MediaQuery.of(context).size.width * .05,
-              //top: MediaQuery.of(context).size.height * .03
-            ),
+                right: MediaQuery.of(context).size.width * .05,
+                left: MediaQuery.of(context).size.width * .05,
+                top: MediaQuery.of(context).size.height * .03),
             child: Column(
               children: [
                 Stack(
@@ -204,22 +209,22 @@ class editProfileState extends State<EditProfile> {
                         // top: MediaQuery.of(context).size.height * .14,
                         // left: MediaQuery.of(context).size.width * .53,
                         child: Container(
-                          height: 26,
-                          width: 26,
-                          decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(20)),
-                              color: Color(0xff00e096)),
-                          child: Center(
-                            child: GestureDetector(
-                              child: Icon(
-                                Icons.add,
-                                color: Colors.white,
-                                size: 15,
-                              ),
-                            ),
+                      alignment: Alignment.center,
+                      height: 26,
+                      width: 26,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
+                          color: Color(0xff00e096)),
+                      child: Center(
+                        child: GestureDetector(
+                          child: Icon(
+                            Icons.add,
+                            color: Colors.white,
+                            size: 15,
                           ),
-                        ))
+                        ),
+                      ),
+                    ))
                   ],
                 ),
                 SizedBox(
@@ -449,6 +454,27 @@ class editProfileState extends State<EditProfile> {
                     ],
                   ),
                 ),
+                SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  width: double.infinity,
+                  child: TextButton(
+                    onPressed: () {
+                      DeleteAccount(context);
+                    },
+                    child: Text(
+                      DemoLocalizations.of(context)
+                          .title['areyouwanttodeleteaccount'],
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Color(h.mainColor)
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -457,11 +483,126 @@ class editProfileState extends State<EditProfile> {
     );
   }
 
+  DeleteAccount(BuildContext context) {
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => Dialog(
+        child: Container(
+          padding: EdgeInsets.only(left: 10, right: 10),
+          height: 150.0,
+          decoration: BoxDecoration(
+            //border: Border.all(color: Colors.black12,width: 2.0),
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.3),
+                spreadRadius: 3,
+                blurRadius: 3,
+                offset: Offset(0, 3), // changes position of shadow
+              ),
+            ],
+          ),
+          child: Stack(
+            children: <Widget>[
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Image.asset(
+                    "images/icon/about.png",
+                    height: 40,
+                    fit: BoxFit.cover,
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Container(
+                      alignment: Alignment.center,
+                      child: Text(
+                        DemoLocalizations.of(context)
+                            .title['deleteacount'],
+                        textAlign: TextAlign.center,
+                      )),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        GestureDetector(
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: Color(h.blueColor)),
+                            height:
+                            MediaQuery.of(context).size.height * .045,
+                            width:
+                            MediaQuery.of(context).size.width * .33,
+                            alignment: Alignment.center,
+                            child: Text(
+                              DemoLocalizations.of(context)
+                                  .title['cancel'],
+                              style: TextStyle(
+                                  color: Colors.white, fontSize: 12),
+                            ),
+                          ),
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                        GestureDetector(
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: Color(h.mainColor)),
+                            height:
+                            MediaQuery.of(context).size.height * .045,
+                            width:
+                            MediaQuery.of(context).size.width * .33,
+                            alignment: Alignment.center,
+                            child: Text(
+                              DemoLocalizations.of(context)
+                                  .title['confirm'],
+                              style: TextStyle(
+                                  color: Colors.white, fontSize: 12),
+                            ),
+                          ),
+                          onTap: () async {
+                            await _userServices.deleteAccount(prefs.getString("UserId"));
+                            clearData();
+                            Navigator.push(
+                                context, GlobalFunction.route(HomePage()));
+                          },
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  clearData() async {
+    //  appConfig.prefs.remove('chooselang');
+    appConfig.prefs.remove("UserId");
+    appConfig.prefs.remove('delmethodtext');
+    appConfig.prefs.remove('delcost'); //delmethodvalue
+    appConfig.prefs.remove('delmethodvalue');
+    appConfig.prefs.remove('paymethodtext');
+    //paymethodvalue
+    appConfig.prefs.remove('paymethodvalue');
+  }
+
   File selectedImage;
 
   pickImage(BuildContext context) async {
-    XFile profileImage =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+    XFile profileImage = await ImagePicker().pickImage(source: ImageSource.gallery);
     setState(() {
       selectedImage = File(profileImage.path);
     });

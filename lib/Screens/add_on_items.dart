@@ -9,13 +9,13 @@ import 'package:provider/provider.dart';
 import '../dbHelper.dart';
 import '../main.dart';
 
-class AddSubItem extends StatefulWidget {
+class AddOnItemsWidget extends StatefulWidget {
   final SubProductDetail1 subItemProduct;
   final ProductDetail product;
   double subItemTotalPrice;
   int quantity;
 
-  AddSubItem({
+  AddOnItemsWidget({
     Key key,
     this.subItemTotalPrice,
     this.subItemProduct,
@@ -24,10 +24,10 @@ class AddSubItem extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<AddSubItem> createState() => _AddSubItemState();
+  State<AddOnItemsWidget> createState() => _AddOnItemsWidgetState();
 }
 
-class _AddSubItemState extends State<AddSubItem> {
+class _AddOnItemsWidgetState extends State<AddOnItemsWidget> {
   final home h = new home();
   DbHelper dbHelper = new DbHelper();
   CartMedelLocal p1;
@@ -73,12 +73,9 @@ class _AddSubItemState extends State<AddSubItem> {
                         print('quunSUb 1: ${widget.quantity}');
                         print('subItem 1: ${slmlmProvider.subItemQuantity}');
 
-                        // if (widget.quantity == slmlmProvider.subItemQuantity) {
-                        //   slmlmProvider.subItemQuantity = widget.quantity;
-                        // }
-
                         if (widget.quantity > 0) {
                           widget.quantity -= 1;
+                          slmlmProvider.quantityAddOnItems--;
                           widget.subItemTotalPrice = widget.quantity *
                               double.parse(widget.subItemProduct.price2);
                           print(
@@ -91,11 +88,8 @@ class _AddSubItemState extends State<AddSubItem> {
                             "img": widget.subItemProduct.image,
                             "description": widget.subItemProduct.description,
                             "price": double.parse(widget.subItemProduct.price),
-                            "offerPrice": Provider.of<SlmlmProvider>(context,
-                                    listen: false)
-                                .totalPriceOffer,
-                            "price2":
-                                double.parse(widget.subItemProduct.price2),
+                            "offerPrice": Provider.of<SlmlmProvider>(context, listen: false).totalPriceOffer,
+                            "price2": double.parse(widget.subItemProduct.price2),
                             "totalPrice": widget.subItemTotalPrice,
                             "quantity": widget.quantity,
                             "selectedTypeName": 'mainProduct',
@@ -106,17 +100,15 @@ class _AddSubItemState extends State<AddSubItem> {
                           });
                           dbHelper.delete(int.parse(widget.subItemProduct.id));
                           await dbHelper.addToCart(p1);
-                          // dbHelper.updateCourse(p1);
                         }
 
-                        if (widget.quantity+1 == slmlmProvider.subItemQuantity) {
+                        if (widget.quantity + 1 ==
+                            slmlmProvider.subItemQuantity) {
                           slmlmProvider.changeSubitemQuantity(widget.quantity);
                           print('quunSUb 2: ${widget.quantity}');
                           print('subItem 2: ${slmlmProvider.subItemQuantity}');
                         }
-                        setState(() {
-
-                        });
+                        setState(() {});
                       },
                     ),
                   ),
@@ -149,15 +141,13 @@ class _AddSubItemState extends State<AddSubItem> {
                       ),
                       onTap: () async {
                         setState(() {
-                          if (widget.quantity < slmlmProvider.quantity) {
+                          if (slmlmProvider.quantityAddOnItems < slmlmProvider.quantity) {
+                            debugPrint("yes");
                             widget.quantity += 1;
+                            slmlmProvider.quantityAddOnItems++;
+
                             widget.subItemTotalPrice = widget.quantity *
                                 double.parse(widget.subItemProduct.price2);
-                            // slmlmProvider.a7a(
-                            //   add: true,
-                            //   quantityOfferParm: widget.quantity,
-                            //   selectedOfferParm: widget.subItemProduct,
-                            // );
 
                             if (widget.quantity >=
                                 slmlmProvider.subItemQuantity) {
@@ -172,11 +162,8 @@ class _AddSubItemState extends State<AddSubItem> {
                             "img": widget.subItemProduct.image,
                             "description": widget.subItemProduct.description,
                             "price": double.parse(widget.subItemProduct.price),
-                            "offerPrice": Provider.of<SlmlmProvider>(context,
-                                    listen: false)
-                                .totalPriceOffer,
-                            "price2":
-                                double.parse(widget.subItemProduct.price2),
+                            "offerPrice": Provider.of<SlmlmProvider>(context, listen: false).totalPriceOffer,
+                            "price2": double.parse(widget.subItemProduct.price2),
                             "totalPrice": widget.subItemTotalPrice,
                             "quantity": widget.quantity,
                             "selectedTypeName": 'subItem',
@@ -195,11 +182,8 @@ class _AddSubItemState extends State<AddSubItem> {
                             "img": widget.subItemProduct.image,
                             "description": widget.subItemProduct.description,
                             "price": double.parse(widget.subItemProduct.price),
-                            "offerPrice": Provider.of<SlmlmProvider>(context,
-                                    listen: false)
-                                .totalPriceOffer,
-                            "price2":
-                                double.parse(widget.subItemProduct.price2),
+                            "offerPrice": Provider.of<SlmlmProvider>(context, listen: false).totalPriceOffer,
+                            "price2": double.parse(widget.subItemProduct.price2),
                             "totalPrice": widget.subItemTotalPrice,
                             "quantity": widget.quantity,
                             "selectedTypeName": 'subItem',

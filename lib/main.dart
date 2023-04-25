@@ -1,7 +1,9 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:fcm_config/fcm_config.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
@@ -27,7 +29,9 @@ import 'Screens/Orders.dart';
 
 import 'Screens/DelveryUser/DeleveryHome.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'Screens/payment_provider.dart';
 import 'Screens/slmlmProvider.dart';
+import 'app/Services/loading_service.dart';
 import 'lang/app_LocalizationDeledate.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -45,27 +49,26 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 Future<void> main() async {
   await appConfig.init();
-  await FCMConfig.instance.init(
-    onBackgroundMessage: _firebaseMessagingBackgroundHandler,
-    alert: true,
-    announcement: true,
-    badge: true,
-    displayInForeground: true,
-    carPlay: false,
-    criticalAlert: true,
-    provisional: false,
-    sound: true,
-    defaultAndroidChannel: AndroidNotificationChannel(
-      '1',
-      'default',
-    ),
-  );
+  // await FCMConfig.instance.init(
+  //   onBackgroundMessage: _firebaseMessagingBackgroundHandler,
+  //   alert: true,
+  //   announcement: true,
+  //   badge: true,
+  //   displayInForeground: true,
+  //   carPlay: false,
+  //   criticalAlert: true,
+  //   provisional: false,
+  //   sound: true,
+  //   defaultAndroidChannel: AndroidNotificationChannel('1', 'Default Channal'),
+  // );
+
   await appConfig.cApp.initLocal();
   runApp(
     Phoenix(
       child: ParentPage(),
     ),
   );
+  configLoading();
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
 }
@@ -86,64 +89,65 @@ class home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Observer(
-      builder: (_) =>
-          MultiProvider(
-            providers: [
-              ChangeNotifierProvider(create: (_) => SlmlmProvider()),
-              ChangeNotifierProvider(create: (_) => MapProvider()),
-              ChangeNotifierProvider(create: (_) => GetDeliveryValueProvider()),
-              ChangeNotifierProvider(create: (_) => PayMentProvider()),
-              ChangeNotifierProvider(create: (_) => NetworkUtil()),
-              ChangeNotifierProvider(create: (_) => GetUserBranch()),
-            ],
-            child: MaterialApp(
-              localizationsDelegates: [
-                // location_picker.S.delegate,
-                const AppLocalizationsDelegate(),
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-              ],
-              supportedLocales: [
-                Locale("en", ""), // OR Locale('ar', 'AE') OR Other RTL locales
-                Locale("ar", ""),
-              ],
-              locale: appConfig.cApp.appLocale,
-              theme: ThemeData(
-                primaryColor: Color(blueColor),
-                fontFamily: 'mishwarfont',
-                colorScheme:
+      builder: (_) => MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => SlmlmProvider()),
+          ChangeNotifierProvider(create: (_) => MapProvider()),
+          ChangeNotifierProvider(create: (_) => GetDeliveryValueProvider()),
+          ChangeNotifierProvider(create: (_) => PayMentProvider()),
+          ChangeNotifierProvider(create: (_) => NetworkUtil()),
+          ChangeNotifierProvider(create: (_) => GetUserBranch()),
+          ChangeNotifierProvider(create: (_) => PaymentProvider()),
+        ],
+        child: MaterialApp(
+          localizationsDelegates: [
+            // location_picker.S.delegate,
+            const AppLocalizationsDelegate(),
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: [
+            Locale("en", ""), // OR Locale('ar', 'AE') OR Other RTL locales
+            Locale("ar", ""),
+          ],
+          locale: appConfig.cApp.appLocale,
+          theme: ThemeData(
+            primaryColor: Color(blueColor),
+            fontFamily: 'mishwarfont',
+            colorScheme:
                 ColorScheme.fromSwatch().copyWith(secondary: Color(0xff55b866)),
-              ),
-              debugShowCheckedModeBanner: false,
-              routes: <String, WidgetBuilder>{
-                '/slider': (BuildContext context) => new slider(),
-                '/login': (BuildContext context) => new login("home"),
-                '/Register': (BuildContext context) => new Register(),
-                '/Adresses': (BuildContext context) => new Adresses(),
-                '/Orders': (BuildContext context) => new Orders(),
-                '/verification': (BuildContext context) =>
-                new verification("", ""),
-                '/mainPage': (BuildContext context) => new HomePage(),
-                '/DeleverMain': (BuildContext context) => new DeleveryHome(),
-                '/DeliveryOrders': (
-                    BuildContext context) => new DeliveryOrders(),
-                '/Cart': (BuildContext context) => new HomePage(),
-                '/fav': (BuildContext context) => new HomePage(),
-                '/VerificationDone': (
-                    BuildContext context) => new VerificationDone(),
-                '/LanguageUi': (BuildContext context) => LanguageUi(),
-              },
-              home:
+          ),
+          debugShowCheckedModeBanner: false,
+          routes: <String, WidgetBuilder>{
+            '/slider': (BuildContext context) => new slider(),
+            '/login': (BuildContext context) => new Login("home"),
+            '/Register': (BuildContext context) => new Register(),
+            '/Adresses': (BuildContext context) => new Adresses(),
+            '/Orders': (BuildContext context) => new Orders(),
+            '/verification': (BuildContext context) => new verification("", ""),
+            '/mainPage': (BuildContext context) => new HomePage(),
+            '/DeleverMain': (BuildContext context) => new DeleveryHome(),
+            '/DeliveryOrders': (BuildContext context) => new DeliveryOrders(),
+            '/Cart': (BuildContext context) => new HomePage(),
+            '/fav': (BuildContext context) => new HomePage(),
+            '/VerificationDone': (BuildContext context) =>
+                new VerificationDone(),
+            '/LanguageUi': (BuildContext context) => LanguageUi(),
+          },
+          builder: EasyLoading.init(
+            builder: BotToastInit(),
+          ),
+          home:
               // GoogleMapCustomize(),
               //Ready_UI()
               //TestUI()
               //ChooseBranch()
               Splash(),
-              // MapScreen(),
-              // Ready_UI()
-            ),
-          ),
+          // MapScreen(),
+          // Ready_UI()
+        ),
+      ),
     );
   }
 }
@@ -159,10 +163,10 @@ class ParentPage extends StatefulWidget {
 
 class _State extends State<ParentPage> {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-  new FlutterLocalNotificationsPlugin();
+      new FlutterLocalNotificationsPlugin();
 
   _register() async {
-    await FCMConfig.instance.messaging.getToken().then((token) {
+    await FCMConfig.messaging.getToken().then((token) {
       SharedPreferences.getInstance().then((shared) {
         shared.setString('token', token);
       });
@@ -187,9 +191,10 @@ class _State extends State<ParentPage> {
   //     setState(() => _message = message["notification"]["title"]);
   //   });
   // }
+
   showNotificationsFunc(Map<String, dynamic> message) async {
-    var android = AndroidNotificationDetails(
-        'channel_id', 'CHANNEL_NAME', channelDescription: 'channelDescription');
+    var android = AndroidNotificationDetails('channel_id', 'CHANNEL_NAME',
+        channelDescription: 'channelDescription');
     var ios = IOSNotificationDetails();
     var platform = new NotificationDetails(android: android, iOS: ios);
     await flutterLocalNotificationsPlugin.show(
@@ -217,7 +222,6 @@ class _State extends State<ParentPage> {
     return home();
   }
 }
-
 
 //cJXWJLaJRZiNrd0wLuxg_E
 //cJXWJLaJRZiNrd0wLuxg_E
